@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Notebook — Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+          --ink: #1a1a2e;
+          --paper: #f8f5f0;
+          --accent: #e07b54;
+          --accent2: #5c7c6e;
+          --muted: #8a8a9a;
+          --card: #ffffff;
+          --border: #e8e4df;
+          --error: #c94040;
+          --success: #3d9970;
+        }
+
+        body {
+          font-family: 'DM Sans', sans-serif;
+          background: var(--paper);
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Decorative background */
+        body::before {
+          content: '';
+          position: fixed; inset: 0;
+          background:
+            radial-gradient(ellipse 80% 60% at 20% 10%, rgba(224,123,84,0.12) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 80% at 80% 90%, rgba(92,124,110,0.10) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 40% at 60% 20%, rgba(26,26,46,0.04) 0%, transparent 50%);
+          pointer-events: none;
+        }
+
+        /* Decorative lines */
+        body::after {
+          content: '';
+          position: fixed;
+          top: -100px; right: -100px;
+          width: 400px; height: 400px;
+          border-radius: 50%;
+          border: 60px solid rgba(224,123,84,0.06);
+          pointer-events: none;
+        }
+
+        .wrapper {
+          width: 100%;
+          max-width: 420px;
+          padding: 24px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .brand {
+          text-align: center;
+          margin-bottom: 36px;
+        }
+
+        .brand-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 56px; height: 56px;
+          background: var(--ink);
+          border-radius: 16px;
+          margin-bottom: 12px;
+          font-size: 26px;
+          transform: rotate(-4deg);
+          box-shadow: 4px 4px 0 var(--accent);
+        }
+
+        .brand h1 {
+          font-family: 'Fraunces', serif;
+          font-size: 2rem;
+          color: var(--ink);
+          letter-spacing: -0.5px;
+        }
+
+        .brand p {
+          color: var(--muted);
+          font-size: 0.88rem;
+          margin-top: 4px;
+        }
+
+        .card {
+          background: var(--card);
+          border-radius: 20px;
+          padding: 36px 32px;
+          border: 1px solid var(--border);
+          box-shadow:
+            0 1px 2px rgba(0,0,0,0.04),
+            0 8px 40px rgba(26,26,46,0.06);
+          animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h2 {
+          font-family: 'Fraunces', serif;
+          font-size: 1.4rem;
+          color: var(--ink);
+          margin-bottom: 6px;
+        }
+
+        .card .subtitle {
+          color: var(--muted);
+          font-size: 0.85rem;
+          margin-bottom: 28px;
+        }
+
+        .field { margin-bottom: 18px; }
+
+        label {
+          display: block;
+          font-size: 0.8rem;
+          font-weight: 500;
+          color: var(--ink);
+          margin-bottom: 7px;
+          letter-spacing: 0.3px;
+        }
+
+        input {
+          width: 100%;
+          padding: 12px 16px;
+          border: 1.5px solid var(--border);
+          border-radius: 10px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.95rem;
+          color: var(--ink);
+          background: var(--paper);
+          transition: border-color 0.2s, box-shadow 0.2s;
+          outline: none;
+        }
+
+        input:focus {
+          border-color: var(--accent);
+          box-shadow: 0 0 0 3px rgba(224,123,84,0.12);
+          background: #fff;
+        }
+
+        input::placeholder { color: var(--muted); }
+
+        .btn {
+          width: 100%;
+          padding: 13px;
+          background: var(--ink);
+          color: #fff;
+          border: none;
+          border-radius: 10px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.95rem;
+          font-weight: 500;
+          cursor: pointer;
+          margin-top: 8px;
+          transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .btn:hover {
+          background: var(--accent);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px rgba(224,123,84,0.35);
+        }
+
+        .btn:active { transform: translateY(0); }
+
+        .btn.loading { pointer-events: none; opacity: 0.8; }
+
+        .alert {
+          padding: 11px 14px;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          margin-bottom: 18px;
+          display: none;
+        }
+        .alert.error { background: #fdf0f0; color: var(--error); border: 1px solid #f5c6c6; display: block; }
+        .alert.success { background: #f0faf4; color: var(--success); border: 1px solid #b8e6cc; display: block; }
+
+        .footer-link {
+          text-align: center;
+          margin-top: 22px;
+          font-size: 0.85rem;
+          color: var(--muted);
+        }
+
+        .footer-link a {
+          color: var(--accent);
+          text-decoration: none;
+          font-weight: 500;
+        }
+        .footer-link a:hover { text-decoration: underline; }
+
+        .divider {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 20px 0;
+        }
+        .divider::before, .divider::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: var(--border);
+        }
+        .divider span { font-size: 0.75rem; color: var(--muted); }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="brand">
+        <div class="brand-icon">📓</div>
+        <h1>Folio</h1>
+        <p>Your personal space to think & write</p>
+    </div>
+
+    <div class="card">
+        <h2>Welcome back</h2>
+        <p class="subtitle">Sign in to access your notes</p>
+
+        <div id="alert" class="alert"></div>
+
+        <div class="field">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your username" autocomplete="username"/>
+        </div>
+
+        <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"/>
+        </div>
+
+        <button class="btn" id="loginBtn" onclick="login()">Sign In</button>
+
+        <div class="divider"><span>or</span></div>
+
+        <div class="footer-link">
+            New here? <a href="/register.html">Create an account</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // If already logged in, redirect
+    fetch('/api/auth/me').then(r => {
+      if (r.ok) window.location.href = '/notes.html';
+    }).catch(() => {});
+
+    document.getElementById('password').addEventListener('keypress', e => {
+      if (e.key === 'Enter') login();
+    });
+
+    function showAlert(msg, type) {
+      const el = document.getElementById('alert');
+      el.textContent = msg;
+      el.className = 'alert ' + type;
+    }
+
+    async function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('loginBtn');
+
+      if (!username || !password) {
+        showAlert('Please fill in all fields.', 'error');
+        return;
+      }
+
+      btn.classList.add('loading');
+      btn.textContent = 'Signing in...';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+          credentials: 'include'
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          showAlert('Login successful! Redirecting...', 'success');
+          setTimeout(() => window.location.href = '/notes.html', 800);
+        } else {
+          showAlert(data.error || 'Login failed.', 'error');
+          btn.classList.remove('loading');
+          btn.textContent = 'Sign In';
+        }
+      } catch (e) {
+        showAlert('Server error. Please try again.', 'error');
+        btn.classList.remove('loading');
+        btn.textContent = 'Sign In';
+      }
+    }
+</script>
+</body>
+</html>
